@@ -23,10 +23,10 @@
     $sqld = "SELECT * FROM `productotemporal`";
     $mostrarCarrito = $objConection->consultar($sqld);
 
-    $sqle = "SELECT `name` FROM `cliente`";
+    $sqle = "SELECT `name`, `id` FROM `cliente`";
     $clientes = $objConection->consultar($sqle);
 
-
+    
     $total="";
 
     if (isset($_GET['agregar'])) {
@@ -41,18 +41,33 @@
 
         $sqlc="INSERT INTO `productotemporal` (`id`, `name`, `precio_unitario`, `descripcion`) VALUES (NULL, '$name',  $precio_unitario, '$descripcion')";
 
-        $objConection->consultar($sqlc);
+        $objConection->ejecutar($sqlc);
 
         header("location:index.php");
     }
 
-    if ($_GET) {
+    if (isset($_GET['borrar'])) {
 
         $sqlm = "DELETE FROM `productotemporal` WHERE `productotemporal`.`id` = " . $_GET['borrar'];
         $objConection->ejecutar($sqlm);
 
         header('location:index.php');
     }
+
+    if($_POST){
+
+        $sqlTotalProducto ="SELECT SUM(precio_unitario) FROM `productotemporal`";
+        $totaProductos = $objConection->consultar($sqlTotalProducto);
+
+        $total= $totaProductos;
+        $total = $total[0]['SUM(precio_unitario)'];
+
+        $clienteSelect= $_POST['clienteSelect'];
+
+        $sqlfactura ="INSERT INTO `factura` (`id`, `fecha`, `total`, `cliente_id`, `producto_id`) VALUES (NULL, current_timestamp(), $total, $clienteSelect);";
+        $objConection->ejecutar($sqlfactura);
+
+    }   
 
     ?>
     <div class="container">
@@ -112,7 +127,6 @@
                                 <td><?php echo $productosCarrito['name']; ?></td>
                                 <td><?php echo $productosCarrito['descripcion']; ?></td>
                                 <td><?php echo $productosCarrito['precio_unitario']; ?></td>
-                                <td><?php echo $productosCarrito['precio_unitario'];?></td>
                                 <td><a name="" id="" class="btn btn-danger" href="?borrar=<?php echo $productosCarrito['id'] ?>" role="button">Eliminar</a></td>
                             </tr>
                         <?php } ?>
@@ -120,9 +134,9 @@
                     </tbody>
                 </table>
                 <label for="">Seleccione un cliente</label>
-                <select name="cliente" id="">
+                <select name="clienteSelect" id="">
                  <?php foreach( $clientes  as  $cliente){?>
-                    <option value="<?php echo $cliente['name']?>"><?php echo $cliente['name']?></option>
+                    <option value="<?php echo $cliente['id']?>"><?php echo $cliente['name']?></option>
                  <?php }?>
                 </select>
                 

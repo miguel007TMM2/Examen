@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <title>Facturar</title>
+    <title>Facturas</title>
 </head>
 
 <body>
@@ -19,11 +19,6 @@
 
     $sqlv = "SELECT * FROM `factura`";
     $facturas = $objConection->consultar($sqlv);
-
-    
-
-
-
     ?>
     <div class="container">
         <div class="row">
@@ -40,7 +35,7 @@
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
-                                            <th>Producto</th>
+                                           
                                             <th>Factura</th>
                                             <th>Precio total</th>
                                             <th>Fecha</th>
@@ -53,10 +48,6 @@
                                                 $clientes= $objConection->consultar($sqldb);
                                                 echo $clientes[0]['name'];
                                                 ?></th>
-
-                                                <td><?php $sqls = "SELECT `name` FROM `producto` WHERE `id`=".$factura['producto_id'];
-                                                $resultado = $objConection->consultar($sqls);
-                                                echo $resultado[0]['name']?></td>
 
                                                 <td><?php echo $factura['id']; ?></td>
                                                 <td><?php echo $factura['total']; ?></td>
