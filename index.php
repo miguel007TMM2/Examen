@@ -124,7 +124,6 @@
                 <table class="table table-striped table-bordered table-sm divScroll">
                     <thead>
                         <tr>
-
                             <th>Nombre</th>
                             <th>Descripcion</th>
                             <th>Precio</th>

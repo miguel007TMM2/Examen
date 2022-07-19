@@ -70,6 +70,9 @@
                 </div>
             </div>
             <div class="col-md-6">
+            <div class="card-header">
+                Lsita de productos
+            </div>
             <table class="table table-striped table-bordered table-sm divScroll">
                 <thead>
                     <tr>
