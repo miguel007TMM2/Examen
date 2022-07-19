@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <title>Home</title>
+    <title>Facturar</title>
 </head>
 
 <body>
@@ -17,93 +17,121 @@
 
     <?php
 
-    if ($_POST) {
-
-
-        $descripcion = (isset($_POST['descripcion'])) ? $_POST['descripcion'] : "";
-        $cantidadProducto = (isset($_POT["cantidadProducto"])) ? $_POST["cantidadProducto"] : "";
-        $precioProducto = (isset($_POT["precioProducto"])) ? $_POST["precioProducto"] : "";
-
-
-        $sql = "INSERT INTO `producto` (`id`, `descripcion`, `cantidad`, `precio_unitario`) VALUES (NULL, '$descripcion', '$cantidadProducto', '$precioProducto');";
-        $objConection->ejecutar($sql);
-
-        header('location:index.php');
-
-    }
-
-
     $sqls = "SELECT * FROM `producto`";
     $resultado = $objConection->consultar($sqls);
 
+    $sqld = "SELECT * FROM `productotemporal`";
+    $mostrarCarrito = $objConection->consultar($sqld);
+
+    $sqle = "SELECT `name` FROM `cliente`";
+    $clientes = $objConection->consultar($sqle);
+
+
+    $total="";
+
+    if (isset($_GET['agregar'])) {
+
+        $sqlm = "SELECT * FROM `producto` WHERE `producto`.`id` = ". $_GET['agregar'];
+        
+        $producto= $objConection->consultar($sqlm);
+
+        $name=$producto[0]['name'];
+        $descripcion=$producto[0]['descripcion'];
+        $precio_unitario=$producto[0]['precio_unitario'];
+
+        $sqlc="INSERT INTO `productotemporal` (`id`, `name`, `precio_unitario`, `descripcion`) VALUES (NULL, '$name',  $precio_unitario, '$descripcion')";
+
+        $objConection->consultar($sqlc);
+
+        header("location:index.php");
+    }
+
     if ($_GET) {
 
-        $sqlm = "DELETE FROM `producto` WHERE `producto`.`id` = " . $_GET['borrar'];
+        $sqlm = "DELETE FROM `productotemporal` WHERE `productotemporal`.`id` = " . $_GET['borrar'];
         $objConection->ejecutar($sqlm);
 
         header('location:index.php');
     }
 
     ?>
-
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <div class="card mb-4">
                     <div class="card-header">
-                        Insertar productos
+                        Productos disponibles
                     </div>
                     <div class="card-body">
                         <div class="container">
-                            <form action="index.php" method="post" enctype="multipart/form-data">
+                            <form action="index.php" method="post">
 
-                                <label for="">Descripcion del producto </label>
-                                <input required type="text" name="descripcion" id="" class="form-control">
-                                <br>
-
-                                <label for="">Cantidad del producto</label>
-                                <input required type="text" name="cantidadProducto" id=""  class="form-control">
-                                <br>
-
-                                <div class="mb-3">
-                                    <label for="" class="form-label">Precio del producto</label>
-                                    <input required type="text" name="precioProducto" id="" class="form-control">
-
-                                </div>
-
-                                <input type="submit" value="Insertar" class="btn btn-success">
+                                <table class="table table-striped table-bordered table-sm divScroll">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Precio</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($resultado as $datos) { ?>
+                                            <tr>
+                                                <td><?php echo $datos['id']; ?></td>
+                                                <td><?php echo $datos['name']; ?></td>
+                                                <td><?php echo $datos['descripcion']; ?></td>
+                                                <td><?php echo $datos['precio_unitario']; ?></td>
+                                                <td><a name="" id="" class="btn btn-primary" href="?agregar=<?php echo $datos['id'] ?>" role="button">Agregar al carrito</a></td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
+                <form action="index.php" method="post">
                 <table class="table table-striped table-bordered table-sm divScroll">
                     <thead>
                         <tr>
-                            <th>ID</th>
+
+                            <th>Nombre</th>
                             <th>Descripcion</th>
-                            <th>Cantidad</th>
                             <th>Precio</th>
-                            <th>Acciones</th>
+                            <th>Total</th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($resultado as $datos) { ?>
+                        <?php foreach ($mostrarCarrito as $productosCarrito) { ?>
                             <tr>
-                                <td><?php echo $datos['id']; ?></td>
-                                <td><?php echo $datos['descripcion']; ?></td>
-                                <td><?php echo $datos['cantidad']; ?></td>
-                                <td><?php echo $datos['precio_unitario']; ?></td>
-                                <td><a name="" id="" class="btn btn-danger" href="?borrar=<?php echo $datos['id'] ?>" role="button">Eliminar</a></td>
+                                <td><?php echo $productosCarrito['name']; ?></td>
+                                <td><?php echo $productosCarrito['descripcion']; ?></td>
+                                <td><?php echo $productosCarrito['precio_unitario']; ?></td>
+                                <td><?php echo $productosCarrito['precio_unitario'];?></td>
+                                <td><a name="" id="" class="btn btn-danger" href="?borrar=<?php echo $productosCarrito['id'] ?>" role="button">Eliminar</a></td>
                             </tr>
                         <?php } ?>
+                        
                     </tbody>
                 </table>
+                <label for="">Seleccione un cliente</label>
+                <select name="cliente" id="">
+                 <?php foreach( $clientes  as  $cliente){?>
+                    <option value="<?php echo $cliente['name']?>"><?php echo $cliente['name']?></option>
+                 <?php }?>
+                </select>
+                
+                <input type="submit" value="Realizar compra" class="btn btn-success">                        
+                </form>
+                
             </div>
-
-
-            <?php include "footer.php" ?>
+        </div>
+        <?php include "footer.php" ?>
 </body>
 
 </html>
