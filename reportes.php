@@ -35,7 +35,7 @@
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
-                                           
+                                            <th>Productos</th>
                                             <th>Factura</th>
                                             <th>Precio total</th>
                                             <th>Fecha</th>
@@ -44,11 +44,17 @@
                                     <tbody>
                                         <?php foreach ($facturas as $factura) { ?>
                                             <tr>
-                                                <th><?php $sqldb = "SELECT `name` FROM `cliente` WHERE `id`=".$factura['cliente_id']; 
-                                                $clientes= $objConection->consultar($sqldb);
-                                                echo $clientes[0]['name'];
-                                                ?></th>
+                                                <th><?php $sqldb = "SELECT `name` FROM `cliente` WHERE `id`=" . $factura['cliente_id'];
+                                                    $clientes = $objConection->consultar($sqldb);
+                                                    echo $clientes[0]['name'];
+                                                    ?></th>
 
+                                                <td><?php $productsName = [(json_decode($factura['productos'], true))]; 
+                                                foreach($productsName as $productName){
+                                                    echo '<pre>';
+                                                    print_r($productName);
+                                                    echo '<pre>';
+                                                } ?></td>
                                                 <td><?php echo $factura['id']; ?></td>
                                                 <td><?php echo $factura['total']; ?></td>
                                                 <td><?php echo $factura['fecha']; ?></td>

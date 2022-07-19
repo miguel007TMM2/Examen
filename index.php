@@ -62,11 +62,22 @@
         $total= $totaProductos;
         $total = $total[0]['SUM(precio_unitario)'];
 
+        $sqlTotalProductos="SELECT * FROM `productotemporal`";
+        $allProductos= $objConection->consultar($sqlTotalProductos);
+
+        $allTemporalProducto = json_encode($allProductos);
+
         $clienteSelect= $_POST['clienteSelect'];
 
-        $sqlfactura ="INSERT INTO `factura` (`id`, `fecha`, `total`, `cliente_id`, `producto_id`) VALUES (NULL, current_timestamp(), $total, $clienteSelect);";
+        $sqlfactura ="INSERT INTO `factura` (`id`, `fecha`, `total`, `cliente_id`, `productos`) VALUES (NULL, current_timestamp(), $total, $clienteSelect, '$allTemporalProducto');";
         $objConection->ejecutar($sqlfactura);
 
+        foreach($allProductos as $allProducto){
+            $sqlDelete = "DELETE FROM `productotemporal` WHERE `productotemporal`.`id` = ".$allProducto['id'];
+            $objConection->ejecutar($sqlDelete);
+        }
+
+        header('location:reportes.php');
     }   
 
     ?>
@@ -118,7 +129,6 @@
                             <th>Descripcion</th>
                             <th>Precio</th>
                             <th>Total</th>
-
                         </tr>
                     </thead>
                     <tbody>
