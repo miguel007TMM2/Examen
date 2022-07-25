@@ -5,7 +5,9 @@
             <a href="index.php"> Facturar </a> |
             <a href="producto.php">Productos</a> |
             <a href="cliente.php"> Clientes</a> |
-            <a href="reportes.php"> Facturas</a> |
+            <a href="reporteCliente.php"> Reportes de clientes</a> |
+            <a href="reporteFacturas.php"> Reporte de facturas</a> |
+            <a href="reporteProductos.php">Reporte de productos</a> |
             <a href="close.php"> Cerrar </a>
             <br>
         </div>

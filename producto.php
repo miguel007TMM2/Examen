@@ -17,7 +17,7 @@
 
     <?php
 
-    if ($_POST) {
+    if (isset($_POST['insertar'])) {
 
         $name =  $_POST['name'];
         $descripcion = $_POST["descripcion"];
@@ -33,10 +33,34 @@
     $sqls = "SELECT * FROM `producto`";
     $resultado = $objConection->consultar($sqls);
 
-    if ($_GET) {
+    if (isset($_GET['borrar'])) {
 
+        
         $sqlm = "DELETE FROM `producto` WHERE `producto`.`id` = " . $_GET['borrar'];
         $objConection->ejecutar($sqlm);
+
+        // header('location:producto.php');
+    }
+
+    if(isset($_POST['id_edit'])){
+
+        if((isset($_POST['name_edit'])) && ($_POST['name_edit'] != $_POST['name_product'])){
+            $nameEdit=$_POST['name_edit'];
+            echo $sqlm = "UPDATE producto SET  `name`='$nameEdit' WHERE `id` = " . $_POST['id_edit'];
+            $objConection->ejecutar($sqlm);
+        }
+
+        if(isset($_POST['descripcion_edit']) && ($_POST['descripcion_edit'] != $_POST['descripcion_product'])){
+            $descripcionEdit=$_POST['descripcion_edit'];
+            echo $sqlm = "UPDATE producto SET  `descripcion`='$descripcionEdit' WHERE `id` = " . $_POST['id_edit'];
+            $objConection->ejecutar($sqlm);
+        }
+
+        if(isset($_POST['precio_unitario_edit']) && (($_POST['precio_unitario_edit'] != $_POST['precio_unitario_product']))){
+            $precio_unitarioEdit=(int)$_POST['precio_unitario_edit'];
+            echo $sqlm = "UPDATE producto SET  `precio_unitario`=$precio_unitarioEdit WHERE `id` = " . $_POST['id_edit'];
+            $objConection->ejecutar($sqlm);
+        }
 
         header('location:producto.php');
     }
@@ -61,8 +85,9 @@
                                 <input required type="text" name="descripcion" id="" class="form-control">
                                 <br>
                                 <label for="" class="form-label">Precio del producto</label>
-                                <input required type="number" name="precio" id="" class="form-control">
+                                <input required type="float" name="precio" id="" class="form-control">
                                 <br>
+                                <input type="hidden" name="insertar">
                                 <input type="submit" value="Insertar" class="btn btn-success">
                             </form>
                         </div>
@@ -70,33 +95,52 @@
                 </div>
             </div>
             <div class="col-md-6">
-            <div class="card-header">
-                Lsita de productos
-            </div>
-            <table class="table table-striped table-bordered table-sm divScroll">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripcion</th>
-                        <th>Precio</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($resultado as $datos) { ?>
+                <div class="card-header">
+                    Lsita de productos
+                </div>
+                <table class="table table-striped table-bordered table-sm divScroll">
+                    <thead>
                         <tr>
-                            <td><?php echo $datos['id']; ?></td>
-                            <td><?php echo $datos['name']; ?></td>  
-                            <td><?php echo $datos['descripcion']; ?></td>
-                            <td><?php echo $datos['precio_unitario']; ?></td>
-                            <td><a name="" id="" class="btn btn-danger" href="?borrar=<?php echo $datos['id'] ?>" role="button">Eliminar</a></td>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($resultado as $datos) {
+                            if (!isset($_POST['id_product'])) { ?>
+                            <form action="producto.php" method="post">
+                            <tr>
+                                    <td><?php echo $datos['id']; ?><input type="hidden" name="id_product" value="<?php echo $datos['id']; ?>"></td>
+                                    <td><?php echo $datos['name']; ?><input type="hidden" name="name_product" value="<?php echo $datos['name']; ?>"></td>
+                                    <td><?php echo $datos['descripcion']; ?><input type="hidden" name="descripcion_product" value="<?php echo $datos['descripcion']; ?>"></td>
+                                    <td><?php echo $datos['precio_unitario']; ?><input type="hidden" name="precio_unitario_product" value="<?php echo $datos['precio_unitario']; ?>"><input type="hidden" name="editar"></td>
+                                    <td><input  class="btn btn-primary" type="submit" value="Editar"> | <a name="" id="" class="btn btn-danger" href="?borrar=<?php echo $datos['id'] ?>" role="button">Eliminar</a></td>
+                                </tr>
+                            </form>
+                                
+                        <?php }
+                        } ?>
+                        <?php if (isset($_POST['id_product'])) {?>
+
+                            <form action="producto.php" method="post">
+                                <tr>
+                                    <td><?php echo $_POST['id_product'] ?><input type="hidden" name="id_edit" value="<?php echo $_POST['id_product']; ?>"></td>
+                                    <td><input type="text" name="name_edit" value="<?php echo $_POST['name_product']; ?>" id=""></td>
+                                    <td><input type="text" name="descripcion_edit" value="<?php echo $_POST['descripcion_product']; ?>" id=""></td>
+                                    <td><input type="float" name="precio_unitario_edit" value="<?php echo $_POST['precio_unitario_product']; ?>" id=""></td>
+
+                                    <td><input type="submit" value="Save" class="btn btn-primary"></td>
+                                </tr>
+                            </form>
+
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
         <?php include "footer.php" ?>
 </body>
 
