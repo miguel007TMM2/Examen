@@ -9,7 +9,7 @@
         public function __construct(){
             try{
 
-                $this->conection= new PDO("mysql:host=$this->server; dbname=facturacion", $this->usuario, $this->password);
+                $this->conection= new PDO("mysql:host=$this->server; dbname=heroku_9ec9f0bcc1d67d6", $this->usuario, $this->password);
                 $this->conection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             }catch(PDOException $error){
