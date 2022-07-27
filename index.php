@@ -108,10 +108,13 @@
             $sqlproductosSearch = "SELECT * FROM `producto` WHERE `name`= '$name_search'";
             $sqlproductoSearch = $objConection->consultar($sqlproductosSearch);
             break;
-        
+
         case isset($_POST['precio_search']):
-            $sqlproductosSearch = "SELECT * FROM `producto` WHERE `precio_unitario`=" . $_POST['precio_search'];
-            $sqlproductoSearch = $objConection->consultar($sqlproductosSearch);
+            if (is_numeric($_POST['precio_search'])) {
+                $sqlproductosSearch = "SELECT * FROM `producto` WHERE `precio_unitario`=" . $_POST['precio_search'];
+                $sqlproductoSearch = $objConection->consultar($sqlproductosSearch);
+                break;
+            }
             break;
     }
     ?>
@@ -123,8 +126,9 @@
                         <nav class="navbar navbar-light bg-light">
                             <?php if (!isset($_POST['searchSelect'])) { ?>
                                 <form class="form-inline" method="POST">
+                                    <button class="btn btn-outline-success my-2 my-sm-2" type="button" name="back" onclick="clickMe()">Atras</button>
                                     <label for="">Tipo de busqueda</label>
-                                    <select name="searchSelect" id="">
+                                    <select name="searchSelect" id="" >
 
                                         <option value="id">ID</option>
                                         <option value="name">Nombre</option>
@@ -138,21 +142,21 @@
                             <?php if ((isset($_POST['searchSelect'])) && ($_POST['searchSelect'] == "id")) { ?>
                                 <form action="index.php" method="post">
                                     <button class="btn btn-outline-success my-2 my-sm-2" type="button" name="back" onclick="clickMe()">Atras</button>
-                                    <input type="number" name="id_search" required>
+                                    <input type="number" name="id_search" required placeholder="ID">
                                     <button class="btn btn-outline-success my-2 my-sm-2" type="submit" name="search">Buscar</button>
                                 </form>
                             <?php } ?>
                             <?php if ((isset($_POST['searchSelect'])) && ($_POST['searchSelect'] == "name")) { ?>
                                 <form action="index.php" method="post">
                                     <button class="btn btn-outline-success my-2 my-sm-2" type="button" name="back" onclick="clickMe()">Atras</button>
-                                    <input type="text" name="name_search" required>
+                                    <input type="text" name="name_search" required placeholder="Name">
                                     <button class="btn btn-outline-success my-2 my-sm-2" type="submit" name="search">Buscar</button>
                                 </form>
                             <?php } ?>
                             <?php if ((isset($_POST['searchSelect'])) && ($_POST['searchSelect'] == "precio")) { ?>
                                 <form action="index.php" method="post">
                                     <button class="btn btn-outline-success my-2 my-sm-2" type="button" name="back" onclick="clickMe()">Atras</button>
-                                    <input type="float" name="precio_search" required>
+                                    <input type="float" name="precio_search" required placeholder="precio">
                                     <button class="btn btn-outline-success my-2 my-sm-2" type="submit" name="search">Buscar</button>
                                 </form>
                             <?php } ?>
@@ -193,21 +197,21 @@
                                             </form>
                                     <?php }
                                     } ?>
-                                    <?php if ((isset($_POST['id_search'])) && (isset($sqlproductoSearch))) {
-                                        foreach ($sqlproductoSearch as $sqlproducto) { ?>
-                                            <form method="POST">
-                                                <tr>
-                                                    <td><?php echo $sqlproducto['id']; ?></td>
-                                                    <td><?php echo $sqlproducto['name']; ?></td>    
-                                                    <td><?php echo $sqlproducto['descripcion']; ?></td>
-                                                    <td><?php echo "$" . $sqlproducto['precio_unitario']; ?></td>
-                                                    <td><input class="col-md-4" type="number" name="cantidad" required><input type="hidden" name="p_id" value="<?php echo $sqlproducto['id'] ?>"></td>
-                                                    <td> <input type="submit" value="Agregar al carrito" class="btn btn-primary"></td>
-                                                </tr>
-                                            </form>
-                                    <?php }
-                                    } ?>
                                     <?php if (isset($sqlproductoSearch)) { ?>
+                                        <?php if ((isset($_POST['id_search'])) && (isset($sqlproductoSearch))) {
+                                            foreach ($sqlproductoSearch as $sqlproducto) { ?>
+                                                <form method="POST">
+                                                    <tr>
+                                                        <td><?php echo $sqlproducto['id']; ?></td>
+                                                        <td><?php echo $sqlproducto['name']; ?></td>
+                                                        <td><?php echo $sqlproducto['descripcion']; ?></td>
+                                                        <td><?php echo "$" . $sqlproducto['precio_unitario']; ?></td>
+                                                        <td><input class="col-md-4" type="number" name="cantidad" required><input type="hidden" name="p_id" value="<?php echo $sqlproducto['id'] ?>"></td>
+                                                        <td> <input type="submit" value="Agregar al carrito" class="btn btn-primary"></td>
+                                                    </tr>
+                                                </form>
+                                        <?php }
+                                        } ?>
                                         <?php if (isset($_POST['name_search'])) {
                                             foreach ($sqlproductoSearch as $sqlproducto) { ?>
                                                 <form method="POST">
