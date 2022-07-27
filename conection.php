@@ -1,9 +1,9 @@
 <?php
 
     class Conexiones{
-        private $server= "localhost"; //127.0.0.1
-        private $usuario="root";
-        private $password="";
+        private $server= "us-cdbr-east-06.cleardb.net";
+        private $usuario="baa9481b33ad2f";
+        private $password="a7947433";
         private $conection;
 
         public function __construct(){
